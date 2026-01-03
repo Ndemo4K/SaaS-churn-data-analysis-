@@ -157,3 +157,4 @@ Dashboard visualization (Tableau / Power BI)
 🙌 Why This Project Matters
 
 This project shows more than SQL ability — it demonstrates analytical thinking, business understanding, debugging skill, and integrity in results.
+ pivot table :https://docs.google.com/spreadsheets/d/e/2PACX-1vRDt2TrD9EpYMcQmuU-xRB19UmCy84q5B528g5etyE7_jjKWM-wtCcdpb-81bnAVddmeuK9F2JU3dvq/pub?gid=326180473&single=true&output=csv
