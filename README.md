@@ -1,5 +1,5 @@
-🧠 Customer Churn Analysis — SQL SaaS Analytics Project
-📌 Overview
+ Customer Churn Analysis — SQL SaaS Analytics Project
+ Overview
 
 This project performs Customer Churn Analysis using pure SQL (MySQL 8.0.44).
 It classifies customers based on financial behavior, engagement patterns, and usage trends — providing business-driven insights rather than just numbers.
@@ -12,12 +12,12 @@ Identify who is at risk
 
 Support data-driven retention strategies
 
-🎯 Business Context
+1. Business Context
 
 Churn is not simply “customers leaving.”
 It reflects behavior and product experience. Before coding, this project establishes realistic churn scenarios:
 
-Hypotheses
+2.Hypotheses
 
 1️⃣ Customers may stop paying due to dissatisfaction or cost concerns
 2️⃣ Customers may stop engaging because they no longer see value
@@ -155,6 +155,7 @@ Customer Lifetime Value integration
 Dashboard visualization (Tableau / Power BI)
 
 🙌 Why This Project Matters
+
 
 This project shows more than SQL ability — it demonstrates analytical thinking, business understanding, debugging skill, and integrity in results.
  pivot table :https://docs.google.com/spreadsheets/d/e/2PACX-1vRDt2TrD9EpYMcQmuU-xRB19UmCy84q5B528g5etyE7_jjKWM-wtCcdpb-81bnAVddmeuK9F2JU3dvq/pub?gid=326180473&single=true&output=csv
