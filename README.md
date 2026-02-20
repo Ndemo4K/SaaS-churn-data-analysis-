@@ -152,7 +152,13 @@ Cohort churn over time
 
 Customer Lifetime Value integration
 
-Dashboard visualization Tableau.
+```mermaid
+pie title Churn Distribution
+    "Financial Churn (78.5%)" : 39242
+    "Active (11%)" : 5502
+    "Engagement Churn (10.5%)" : 5256
+
+
 Here is the executive summary for the analysis:https://docs.google.com/spreadsheets/d/1pd0wS7Nqb2vDb96ysfekuvM6FkZSNHOH8OulOsCVWog/edit?usp=sharing
 
 🙌 Why This Project Matters
