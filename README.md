@@ -152,7 +152,8 @@ Cohort churn over time
 
 Customer Lifetime Value integration
 
-Dashboard visualization (Tableau / Power BI)
+Dashboard visualization Tableau.
+Here is the executive summary for the analysis:https://docs.google.com/spreadsheets/d/1pd0wS7Nqb2vDb96ysfekuvM6FkZSNHOH8OulOsCVWog/edit?usp=sharing
 
 🙌 Why This Project Matters
 
