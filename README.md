@@ -1,164 +1,100 @@
- Customer Churn Analysis — SQL SaaS Analytics Project
- Overview
+# SaaS Customer Churn Analysis
 
-This project performs Customer Churn Analysis using pure SQL (MySQL 8.0.44).
-It classifies customers based on financial behavior, engagement patterns, and usage trends — providing business-driven insights rather than just numbers.
+A SQL-based churn analysis project that classifies customers by financial behavior, engagement patterns, and usage trends — producing business-driven insights rather than raw numbers.
 
-The objective is to:
+**Tech stack:** MySQL 8.0 · SQL CTEs · Google Sheets (reporting)
 
-Understand why customers churn
+---
 
-Identify who is at risk
+## Business Context
 
-Support data-driven retention strategies
+Churn is not simply "customers leaving." It reflects product experience and value perception. This project starts from business hypotheses, not data, and works forward to SQL.
 
-1. Business Context
+**Hypotheses:**
 
-Churn is not simply “customers leaving.”
-It reflects behavior and product experience. Before coding, this project establishes realistic churn scenarios:
+1. Customers may stop paying due to dissatisfaction or cost concerns
+2. Customers may stop engaging because they no longer see value in the product
+3. Some customers may still pay but not use the product — a hidden retention opportunity
 
-2.Hypotheses
+---
 
-1️⃣ Customers may stop paying due to dissatisfaction or cost concerns
-2️⃣ Customers may stop engaging because they no longer see value
-3️⃣ Some customers may still pay but not use the product (important business opportunity)
+## Churn Personas
 
-These translate into four customer personas.
+Each customer is assigned exactly one label, in priority order:
 
-👥 Churn Personas Defined
-Persona	Description
-Financial Churn	Customer hasn’t made a payment in 90+ days
-Engagement Churn	Customer hasn’t logged in for 90+ days
-Silent Churn	Customer is still paying but not logging in
-Healthy Customer	Customer is paying and actively using the platform
+| Persona | Definition | Business Implication |
+|---|---|---|
+| **Financial Churn** | No payment in the last 90 days | Highest risk — revenue already lost |
+| **Engagement Churn** | No login in the last 90 days | At risk — may cancel soon |
+| **Silent Churn** | Still paying but not logging in | Upsell / customer success opportunity |
+| **Active** | Paying and logging in regularly | Healthy — focus on retention |
 
-Each persona reveals different product and business implications.
+Priority order is intentional: financial loss has the highest business risk and should be acted on first.
 
-🗂️ Data Sources
+---
 
-This project uses four key tables:
+## Data Model
 
-customers
+Four tables drive the analysis. See [`schema.sql`](schema.sql) for full DDL.
 
-Basic user profile information
-customer_id, name, email, signup_date, country
+| Table | Purpose | Key Columns |
+|---|---|---|
+| `customers` | Core customer profiles | `customer_id`, `name`, `email`, `signup_date`, `country` |
+| `subscriptions` | Subscription lifecycle | `customer_id`, `plan_name`, `start_date`, `end_date`, `status` |
+| `transactions` | Billing history | `customer_id`, `transaction_date`, `amount` |
+| `user_activity` | Engagement events | `customer_id`, `event_type`, `event_date` |
 
-subscriptions
+---
 
-Subscription lifecycle tracking (active/expired periods)
+## Analytical Approach
 
-transactions
+All logic lives in a single query in [`CHURN.sql`](CHURN.sql) using four CTEs:
 
-Tracks spending history
-Used to determine last payment
+1. **`financial_churn`** — customers whose `MAX(transaction_date)` is 90+ days ago
+2. **`engagement_churn`** — customers whose last `login` event is 90+ days ago
+3. **`silent_churn`** — customers with a recent payment but no recent login. `COALESCE` handles customers who have *never* logged in, treating them as silent churners rather than dropping them
+4. **Final SELECT** — LEFT JOINs all three CTEs onto the customer base; a `CASE` expression assigns exactly one label per customer
 
-user_activity
+---
 
-Tracks engagement behavior
-Used to determine last login
+## Key Finding
 
-🧠 Analytical Approach
-1️⃣ Financial Churn
+Silent churn returned **zero customers** — and this was investigated rather than ignored.
 
-Identify customers whose last transaction date ≥ 90 days ago
+Every customer who was still paying was also actively logging in. This tells us:
 
-2️⃣ Engagement Churn
+- **Strong product adoption** among paying users — they are getting value
+- **No "subscription zombies"** — no one is being charged for a product they forgot about
+- The silent churn query is logically correct; the data simply reflects a healthy user base
 
-Identify users whose last login ≥ 90 days ago
+This is a real insight. Forcing a non-zero result would have been dishonest.
 
-3️⃣ Silent Churn
+---
 
-Identify users who:
+## Results
 
-Still have transactions in the last 90 days
+The final classification is exported in [`results of churn analysis.csv`](results%20of%20churn%20analysis.csv).
 
-BUT have not logged in in 90+ days
+**Executive Summary (Google Sheets with pivot tables):**
+[View Report](https://docs.google.com/spreadsheets/d/1pd0wS7Nqb2vDb96ysfekuvM6FkZSNHOH8OulOsCVWog/edit?usp=sharing)
 
-OR have no login history at all
+![Executive Summary](executive%20summary.png)
 
-4️⃣ Final Classification
+---
 
-Combine all churn definitions using CTEs + LEFT JOINS.
-Priority order is intentional:
+## Skills Demonstrated
 
-Financial → Engagement → Silent → Active
+- Business problem framing before writing any SQL
+- Churn segmentation design with prioritized classification logic
+- NULL handling with `COALESCE` to avoid silent data drops
+- Honest interpretation — investigating unexpected results rather than ignoring them
+- CTE-based query structure for readability and maintainability
 
+---
 
-because financial loss has the highest business risk.
+## Potential Improvements
 
-✅ Key Outcome
-
-Final dataset outputs:
-
-customer_id	name	email	churn_type
-
-Each customer is assigned exactly one churn category.
-
-🔍 Key Finding
-
-During analysis:
-
-Financial churn existed
-
-Engagement churn existed
-
-Silent churn returned zero customers
-
-This was investigated — not ignored.
-
-It revealed:
-
-All customers who were still paying were also logging in.
-
-This indicates:
-
-Strong product adoption among paying users
-
-No unnoticed “subscription zombies”
-
-No artificial churn inflation
-
-This is a real insight, not a failure of the query.
-
-⚙️ Tech Stack
-
-MySQL 8.0.44
-
-SQL CTEs, joins, grouping, date filtering
-
-Exported to Google Sheets for review
-
-📈 Skills Demonstrated
-
-Business problem framing
-
-SQL data modeling & reasoning
-
-Null handling & logical prioritization
-
-Churn analytics understanding
-
-Interpreting data honestly instead of forcing outcomes
-
-🚀 Future Improvements
-
-Potential enhancements:
-
-Revenue churn metrics
-
-Subscription churn vs behavioral churn comparison
-
-Cohort churn over time
-
-Customer Lifetime Value integration
-
-
-
-
-Here is the executive summary for the analysis:https://docs.google.com/spreadsheets/d/1pd0wS7Nqb2vDb96ysfekuvM6FkZSNHOH8OulOsCVWog/edit?usp=sharing
-
-🙌 Why This Project Matters
-
-
-This project shows more than SQL ability — it demonstrates analytical thinking, business understanding, debugging skill, and integrity in results.
- pivot table :https://docs.google.com/spreadsheets/d/e/2PACX-1vRDt2TrD9EpYMcQmuU-xRB19UmCy84q5B528g5etyE7_jjKWM-wtCcdpb-81bnAVddmeuK9F2JU3dvq/pub?gid=326180473&single=true&output=csv
+- Revenue churn (MRR lost, not just customer count)
+- Subscription churn vs. behavioral churn comparison
+- Cohort-based churn over time (monthly retention curves)
+- Customer Lifetime Value integration
